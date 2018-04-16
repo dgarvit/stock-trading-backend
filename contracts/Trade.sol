@@ -14,6 +14,10 @@ contract Trade {
     owner = msg.sender;
   }
 
+  modifier restricted() {
+    if (msg.sender == owner) _;
+  }
+
   function createNewTrade(bytes32 id, address _buyer, address _seller) public payable {
     balance[id] = msg.value;
     buyer[id] = _buyer;
@@ -21,7 +25,7 @@ contract Trade {
     start[id] = now;
   }
 
-  function accept(bytes32 id) {
+  function accept(bytes32 id) public {
     require (!done[id]);
 
     if (msg.sender == buyer[id])
@@ -42,7 +46,30 @@ contract Trade {
     require (!done[id]);
 
     owner.transfer(balance[id] / 100);
-    seller[id].transfer(balance[id] * 0.9);
+    seller[id].transfer(balance[id] - balance[id] / 10);
+    balance[id] = 0;
+    done[id] = true;
+  }
+
+  function cancel(bytes32 id) public {
+    require (!done[id]);
+
+    if (msg.sender == buyer[id])
+      buyerOk[id] = false;
+    else if (msg.sender == seller[id])
+      sellerOk[id] = false;
+
+    if (!buyerOk[id] && !sellerOk[id]) {
+      buyer[id].transfer(balance[id]);
+      balance[id] = 0;
+      done[id] = true;
+    }
+  }
+
+  function kill(bytes32 id) public restricted {
+    require (!done[id]);
+    buyer[id].transfer(balance[id]);
+    balance[id] = 0;
     done[id] = true;
   }
 }
