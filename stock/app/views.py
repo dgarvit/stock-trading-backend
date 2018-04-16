@@ -1,8 +1,10 @@
 from django.shortcuts import render
-from datetime import datetime
+from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='/login/')
 def index(request):
-	today = datetime.now().strftime("%Y-%m-%d")
-	return render(request, 'index.html', {
-		'today': today,
-		})
+	''''if request.user.is_authenticated():
+		return HttpResponseRedirect(reverse('trade'))
+	else:'''
+	return render(request, 'index.html')
