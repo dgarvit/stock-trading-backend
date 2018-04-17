@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+    <form action="" method="get">
+        <fieldset>
+            <div class = "form-group">
+                <table align = "center">
+                <tr bgcolor="#f7f7f7"><th colspan = 6>{{ head }}</th></tr>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Buyer Address</th>
+                    <th>Seller Address</th>
+                    <th>Stock</th>
+                    <th>Quantity</th>
+                </tr>
+
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.id }}</td>
+                    <td>{{ transaction.buyer }}</td>
+                    <td>{{ transaction.seller }}</td>
+                    <td>{{ transaction.stock }}</td>
+                    <td>{{ transaction.quantity }}</td>
+                </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}

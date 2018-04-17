@@ -7,30 +7,39 @@
 {% block main %}
         <fieldset>
             <div>
-                <h5 class = "index-subheader"><br><b>Username:</b>&nbsp; {{ user }}</br><br><b>Balance:</b>&nbsp; {{ balance }}</br>
+                <h5 class = "index-subheader"><br><b>Username:</b>&nbsp; {{ user }}</br><br><b>Balance:</b>&nbsp; {{ userdict.balance }}</br><br><b>Address:</b>&nbsp; {{ userdict.address }}</br>
                 </h5>
             </div>
-            <!--<div class = "form-group">
+            <div class = "form-group">
                 <table align = "center">
-                    {% if sum(quantity) != 0 %}
                     <tr bgcolor="#f7f7f7">
-                        <th>Code</th>
-                        <th>Name</th>
-                        <th>Quantity</th>
-                        <th>Current Price p/s</th>
-                        <th>Current Value</th>
+                        <th>Stock A</th>
+                        <th>Stock B</th>
+                        <th>Stock C</th>
+                        <th>Stock D</th>
+                        <th>Stock E</th>
                     </tr>
-                    {% endif %}
-                    {% for i in iterable_range if quantity[i] != 0 %}
                     <tr>
-                        <td>{{symbol[i]["stock"]}}</td>
-                        <td>{{name[i]["name"]}}</td>
-                        <td>{{quantity[i]}}</td>
-                        <td>{{usd(currentprice[i]["price"])}}</td>
-                        <td>{{usd(currentvaluation[i])}}</td>
+                        <td>{{ userdict.StockA }}</td>
+                        <td>{{ userdict.StockB }}</td>
+                        <td>{{ userdict.StockC }}</td>
+                        <td>{{ userdict.StockD }}</td>
+                        <td>{{ userdict.StockE }}</td>
+                    </tr>
+                </table>
+
+                <table align = "center">
+                    <tr bgcolor="#f7f7f7">
+                        <th>Stock</th>
+                        <th>Price</th>
+                    </tr>
+                    {% for key,value in stockdict.items %}
+                    <tr>
+                        <td>{{ key }}</td>
+                        <td>{{ value }}</td>
                     </tr>
                     {% endfor %}
                 </table>
-            </div>-->
+            </div>
         </fieldset>
 {% endblock %}

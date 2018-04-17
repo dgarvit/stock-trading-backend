@@ -48,7 +48,7 @@ def index(request):
     user = UserExt.objects.get(userId=request.user)
     w3 = web3.Web3(web3.HTTPProvider(node_url))
     d={}
-    d["Balance"] = w3.toEther((w3.eth.getBalance(user.address)))
+    d["balance"] = w3.toEther((w3.eth.getBalance(user.address)))
     d["StockA"]  = user.StockA
     d["StockB"]  = user.StockB
     d["StockC"]  = user.StockC
@@ -66,7 +66,10 @@ def index(request):
         "E":Stocks.objects.get(name="E").price
     }
 
-    return render(request, 'index.html', d)
+    return render(request, 'index.html', {
+        'userdict': d,
+        'stockdict': d2,
+        })
 
 @login_required(login_url='/login/')
 def buy_stock(request):
@@ -145,6 +148,7 @@ def view_txns(request):
     cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
 
     tmp = txnDB.objects.all()
+    head = "ALL TRANSACTIONS"
     for i in tmp:
         buyer,seller,balance=cI.getTxn(i.txnID)
         t={
@@ -156,8 +160,11 @@ def view_txns(request):
             "quantity":i.quantity
         }
         txnList.append(t)
+    return render(request, 'transactions.html', {
+        'head': head,
+        'transactions': txnList,
+        })
 
-    #render stuff
 
 @login_required(login_url='/login/')
 def view_txns_user(request):
@@ -178,4 +185,8 @@ def view_txns_user(request):
         }
         txnList.append(t)
 
-    #render stuff
+    head = "MY TRANSACTIONS"
+    return render(request, 'transactions.html', {
+        'head': head,
+        'transactions': txnList,
+        })
