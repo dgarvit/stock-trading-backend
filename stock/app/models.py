@@ -24,3 +24,8 @@ class Stocks(models.Model):
 	price = models.IntegerField()
 	quantity = models.IntegerField()
 	available = models.IntegerField()
+
+class TxnDB(models.Model):
+	txnID = models.CharField(max_length=32)
+	user = models.ForeignKey(UserExt)
+	status = models.CharField(max_length=10)

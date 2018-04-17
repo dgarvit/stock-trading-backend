@@ -66,7 +66,7 @@ contract Trade {
     }
   }
 
-  function kill(bytes32 id) public restricted {
+  function killTxn(bytes32 id) public restricted {
     require (!done[id]);
     buyer[id].transfer(balance[id]);
     balance[id] = 0;
