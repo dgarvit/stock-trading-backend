@@ -184,8 +184,8 @@ def view_txns(request):
     txnList=[]  
     w3 = web3.Web3(web3.HTTPProvider(node_url))
     cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
-
-    tmp = txnDB.objects.all()
+    
+    tmp = TxnDB.objects.all()
     head = "ALL TRANSACTIONS"
     for i in tmp:
         buyer,seller,balance=cI.getTxn(i.txnID)
@@ -209,8 +209,8 @@ def view_txns_user(request):
     txnList=[]
     w3 = web3.Web3(web3.HTTPProvider(node_url))
     cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
-
-    tmp = txnDB.objects.filter(userId=request.user)
+    user = UserExt.objects.get(userId=request.user)
+    tmp = TxnDB.objects.filter(user=user)
     for i in tmp:
         buyer,seller,balance=cI.getTxn(i.txnID)
         t={
