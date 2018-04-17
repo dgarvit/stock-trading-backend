@@ -14,6 +14,7 @@ import web3
 import json
 import datetime
 import hashlib
+import os
 
 abi = json.load(open("./Trade.json"))["abi"]
 contract_address="0x2063c81d7a8c1a3be3ad92b8fae6c24f5186c946"
@@ -74,35 +75,60 @@ def index(request):
 @login_required(login_url='/login/')
 def buy_stock(request):
     w3 = web3.Web3(web3.HTTPProvider(node_url))
-    cI = w3.eth.contract(abi=abi,address=w3.toChecksumAddress(contract_address)) 
+    cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract)
     if request.method == "POST":
         user = UserExt.objects.get(userId = request.user)
 
         raw_password = request.POST.get("password1",'')
         stock = request.POST.get("stock",'')
-        quantity = request.POST.get("quantity",'')
+        quantity = int(request.POST.get("quantity",''))
         seller_address = request.POST.get("seller_address",'')
         seller = UserExt.objects.get(address = seller_address)
         stockObj = Stocks.objects.get(name = stock)
         tmp = {
-            "A":seller.StockA,
-            "B":seller.StockB,
-            "C":seller.StockC,
-            "D":seller.StockD,
-            "E":seller.StockE
+            "A":seller.stockA,
+            "B":seller.stockB,
+            "C":seller.stockC,
+            "D":seller.stockD,
+            "E":seller.stockE
         }
 
         messages = []
-        if (tmp[stock] <= quantity and quantity*stockObj.price <= w3.eth.getBalance(user.address)):
+        print (tmp[stock],quantity,quantity*stockObj.price,w3.eth.getBalance(user.address))
+        if (tmp[stock] >= int(quantity) and quantity*stockObj.price <= w3.eth.getBalance(user.address)):
             w3.personal.unlockAccount(user.address,raw_password)
-            txnID = hashlib.md5(request.user.address+user_address+os.urandom(4)).hexdigest()
-            cI.createNewTrade.sendTransaction(txnID,user.address,user_address,{"from":user.address,"value":quantity*stockObj.price})
+            txnID = hashlib.md5(bytes(user.address+seller_address,"utf-8")+os.urandom(4)).hexdigest()
+            print(cI.__dict__)
+            
+            cI.createNewTrade(txnID,user.address,seller_address,transact={"from":user.address,"value":quantity*stockObj.price})
             cI.accept(txnID,transact={"from":user.address})
             w3.personal.unlockAccount(seller_address,raw_password)
             cI.accept(txnID,transact={"from":seller_address})
-            tmp[stock] -= quantity
-            tmp[stock].save()
-            var = txnDB(txnID=txnID,status="pending",user=request.user,stock=stock,quantity=quantity)
+            tmp[stock] -= int(quantity)
+            if stock=="A":
+                seller.stockA-=int(quantity)
+            if stock=="B":
+                seller.stockB-=int(quantity)
+            if stock=="C":
+                seller.stockC-=int(quantity)
+            if stock=="D":
+                seller.stockD-=int(quantity)
+            if stock=="E":
+                seller.stockE-=int(quantity)
+            seller.save()
+            if stock=="A":
+                user.stockA+=int(quantity)
+            if stock=="B":
+                user.stockB+=int(quantity)
+            if stock=="C":
+                user.stockC+=int(quantity)
+            if stock=="D":
+                user.stockD+=int(quantity)
+            if stock=="E":
+                user.stockE+=int(quantity)
+
+            user.save()
+            var = TxnDB(txnID=txnID,status="pending",user=user,stock=stock,quantity=quantity)
             var.save()
             messages.append("Transaction " + txnID + " was successful!")
 
