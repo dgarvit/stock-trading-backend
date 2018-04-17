@@ -146,18 +146,36 @@ def view_txns(request):
 
     tmp = txnDB.objects.all()
     for i in tmp:
-        txnList.append(cI.getTxn(i.txnID)+(i.stock,i.quantity))
+        buyer,seller,balance=cI.getTxn(i.txnID)
+        t={
+            "id":i.txnID,
+            "buyer":buyer,
+            "seller":seller,
+            "balance":balance,
+            "stock":i.stock,
+            "quantity":i.quantity
+        }
+        txnList.append(t)
 
     #render stuff
 
 @login_required(login_url='/login/')
 def view_txns_user(request):
-    txnList=[]  
+    txnList=[]
     w3 = web3.Web3(web3.HTTPProvider(node_url))
     cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
 
     tmp = txnDB.objects.filter(userId=request.user)
     for i in tmp:
-        txnList.append(cI.getTxn(i.txnID)+(i.stock,i.quantity))
+        buyer,seller,balance=cI.getTxn(i.txnID)
+        t={
+            "id":i.txnID,
+            "buyer":buyer,
+            "seller":seller,
+            "balance":balance,
+            "stock":i.stock,
+            "quantity":i.quantity
+        }
+        txnList.append(t)
 
     #render stuff
