@@ -34,7 +34,7 @@ class TxnDB(models.Model):
 		('E','StockE')
 	)
 	txnID = models.CharField(max_length=32)
-	user = models.ForeignKey(UserExt)
+	user = models.ForeignKey(UserExt, on_delete=models.CASCADE)
 	status = models.CharField(max_length=10)
 	stock = models.CharField(max_length=1, choices = STOCKS)
 	quantity = models.IntegerField()
