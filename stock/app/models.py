@@ -26,6 +26,15 @@ class Stocks(models.Model):
 	available = models.IntegerField()
 
 class TxnDB(models.Model):
+	STOCKS = (
+		('A','StockA'),
+		('B','StockB'),
+		('C','StockC'),
+		('D','StockD'),
+		('E','StockE')
+	)
 	txnID = models.CharField(max_length=32)
 	user = models.ForeignKey(UserExt)
 	status = models.CharField(max_length=10)
+	stock = models.CharField(max_length=1, choices = STOCKS)
+	quantity = models.IntegerField()
