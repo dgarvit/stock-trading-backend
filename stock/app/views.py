@@ -58,6 +58,14 @@ def index(request):
 
     d["OtherUsers"] = UserExt.objects.exclude(userId=request.user)
 
+    d2 = {
+        "A":Stocks.objects.get(name="A").price,
+        "B":Stocks.objects.get(name="B").price,
+        "C":Stocks.objects.get(name="C").price,
+        "D":Stocks.objects.get(name="D").price,
+        "E":Stocks.objects.get(name="E").price
+    }
+
     return render(request, 'index.html', d)
 
 @login_required(login_url='/login/')
@@ -91,7 +99,7 @@ def buy_stock(request):
             cI.accept(txnID,transact={"from":seller_address})
             tmp[stock] -= quantity
             tmp[stock].save()
-            var = txnDB(txnID=txnID,status="pending",user=request.user)
+            var = txnDB(txnID=txnID,status="pending",user=request.user,stock=stock,quantity=quantity)
             var.save()
             messages.append("Transaction " + txnID + " was successful!")
 
@@ -138,7 +146,7 @@ def view_txns(request):
 
     tmp = txnDB.objects.all()
     for i in tmp:
-        txnList.append(cI.getTxn(i.txnID))
+        txnList.append(cI.getTxn(i.txnID)+(i.stock,i.quantity))
 
     #render stuff
 
@@ -150,6 +158,6 @@ def view_txns_user(request):
 
     tmp = txnDB.objects.filter(userId=request.user)
     for i in tmp:
-        txnList.append(cI.getTxn(i.txnID))
+        txnList.append(cI.getTxn(i.txnID)+(i.stock,i.quantity))
 
     #render stuff
