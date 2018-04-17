@@ -6,7 +6,7 @@ from django.contrib.auth import login, authenticate
 
 import time
 
-from .models import UserExt, Stocks, txnDB
+from .models import UserExt, Stocks, TxnDB
 
 from web3.contract import ConciseContract
 
@@ -15,8 +15,8 @@ import json
 import datetime
 import hashlib
 
-abi = open("Trade.json")["abi"]
-contract_address="XXX"
+abi = json.load(open("./Trade.json"))["abi"]
+contract_address="0x2063c81d7a8c1a3be3ad92b8fae6c24f5186c946"
 
 node_url = "http://localhost:8545"
 
@@ -48,12 +48,12 @@ def index(request):
     user = UserExt.objects.get(userId=request.user)
     w3 = web3.Web3(web3.HTTPProvider(node_url))
     d={}
-    d["balance"] = w3.toEther((w3.eth.getBalance(user.address)))
-    d["StockA"]  = user.StockA
-    d["StockB"]  = user.StockB
-    d["StockC"]  = user.StockC
-    d["StockD"]  = user.StockD
-    d["StockE"]  = user.StockE
+    d["balance"] = w3.eth.getBalance(user.address)
+    d["StockA"]  = user.stockA
+    d["StockB"]  = user.stockB
+    d["StockC"]  = user.stockC
+    d["StockD"]  = user.stockD
+    d["StockE"]  = user.stockE
     d["address"] = user.address
 
     d["OtherUsers"] = UserExt.objects.exclude(userId=request.user)
