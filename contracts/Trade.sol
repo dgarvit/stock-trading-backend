@@ -72,4 +72,11 @@ contract Trade {
     balance[id] = 0;
     done[id] = true;
   }
+
+  function getTxn(bytes32 id) public view returns (address,address,uint){
+    return (buyer[id],seller[id],balance[id]);
+  }
+
 }
+
+  
