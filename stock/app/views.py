@@ -15,7 +15,7 @@ import json
 import datetime
 import hashlib
 
-abi = "XXX"
+abi = open("Trade.json")["abi"]
 contract_address="XXX"
 
 node_url = "http://localhost:8545"
@@ -133,4 +133,24 @@ def sell_stock(request):
         #render some more stuff :P
 
 
+def view_txns(request):
+    txnList=[]  
+    w3 = web3.Web3(web3.HTTPProvider(node_url))
+    cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
 
+    tmp = txnDB.objects.all()
+    for i in tmp:
+        txnList.append(cI.getTxn(i.txnID))
+
+    #render stuff
+
+def view_txns_user(request):
+    txnList=[]  
+    w3 = web3.Web3(web3.HTTPProvider(node_url))
+    cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
+
+    tmp = txnDB.objects.filter(userId=request.user)
+    for i in tmp:
+        txnList.append(cI.getTxn(i.txnID))
+
+    #render stuff
