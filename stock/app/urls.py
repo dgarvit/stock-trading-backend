@@ -9,6 +9,6 @@ urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('buy/', views.buy_stock, name='buy'),
     path('sell/', views.sell_stock, name='sell'),
-    path('transactions/', views.view_txns, name='transactions'),
-    path('my-transactions/', views.view_txns_user, name='user_transactions'),
+    path('history/', views.view_txns, name='history'),
+    path('transactions/', views.view_txns_user, name='user_transactions'),
 ]

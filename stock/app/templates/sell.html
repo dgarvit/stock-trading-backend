@@ -6,15 +6,16 @@
 
 {% block main %}
     <form action="" method="post">
+        {% csrf_token %}
         <fieldset>
-            <h5 class = "sub-header">Available for Sale:</h5>
+            <h5 class = "sub-header">Available for Sale by you:</h5>
                 <div class = "form-group">
                     <table align = "center">
                         <tr bgcolor="#f7f7f7">
                             <th>Code</th>
                             <th>Quantity</th>
                         </tr>
-                        {% for key,value in stock.items %}
+                        {% for key,value in stocks.items %}
                         <tr>
                             <td>{{ key }}</td>
                             <td>{{ value }}</td>

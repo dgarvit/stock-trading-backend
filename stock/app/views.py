@@ -74,7 +74,7 @@ def index(request):
 @login_required(login_url='/login/')
 def buy_stock(request):
     w3 = web3.Web3(web3.HTTPProvider(node_url))
-    cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
+    cI = w3.eth.contract(abi=abi,address=w3.toChecksumAddress(contract_address)) 
     if request.method == "POST":
         user = UserExt.objects.get(userId = request.user)
 
@@ -109,21 +109,21 @@ def buy_stock(request):
         else:
             messages.append("Error in the fields!")
 
-        return render(request, {'messages': messages})
+        return render(request, 'buy.html', {'messages': messages})
     else:
-        render(request, 'buy.html')
+        return render(request, 'buy.html')
 
 @login_required(login_url='/login/')
 def sell_stock(request):
     w3 = web3.Web3(web3.HTTPProvider(node_url))
-    cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
+    cI = w3.eth.contract(abi=abi,address=w3.toChecksumAddress(contract_address)) 
     user = UserExt.objects.get(userId = request.user)
     tmp = {
-        "A":user.StockA,
-        "B":user.StockB,
-        "C":user.StockC,
-        "D":user.StockD,
-        "E":user.StockE
+        "A":user.stockA,
+        "B":user.stockB,
+        "C":user.stockC,
+        "D":user.stockD,
+        "E":user.stockE
     }
 
     messages = []
@@ -131,13 +131,25 @@ def sell_stock(request):
         
         stock = request.POST.get("stock",'')
         quantity = request.POST.get("quantity",'')
-        tmp[stock] += quantity
+        
+        tmp[stock] += int(quantity)
+        if stock=="A":
+            user.stockA+=int(quantity)
+        if stock=="B":
+            user.stockB+=int(quantity)
+        if stock=="C":
+            user.stockC+=int(quantity)
+        if stock=="D":
+            user.stockD+=int(quantity)
+        if stock=="E":
+            user.stockE+=int(quantity)
+
         user.save()
         messages.append("Stock added for listing successfully!")
     
     return render(request, 'sell.html', {
         'messages': messages,
-        'stocks': temp,
+        'stocks': tmp,
         })
 
 
