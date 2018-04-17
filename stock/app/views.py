@@ -20,15 +20,6 @@ contract_address="XXX"
 
 node_url = "http://localhost:8545"
 
-@login_required(login_url='/login/')
-def index(request):
-	w3 = web3.Web3(web3.HTTPProvider(node_url))
-	usr = UserExt(userId=request.user)
-	balance  = w3.eth.getBalance(usr.address)
-	return render(request, 'index.html', {
-		balance: balance,
-		})
-
 def signup(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -53,7 +44,7 @@ def signup(request):
 
 
 @login_required(login_url='/login/')
-def home(request):
+def index(request):
     user = UserExt.objects.get(userId=request.user)
     w3 = web3.Web3(web3.HTTPProvider(node_url))
     d={}
@@ -67,7 +58,7 @@ def home(request):
 
     d["OtherUsers"] = UserExt.objects.exclude(userId=request.user)
 
-    return render(request, 'home.html', d)
+    return render(request, 'index.html', d)
 
 @login_required(login_url='/login/')
 def buy_stock(request):
@@ -89,6 +80,8 @@ def buy_stock(request):
             "D":seller.StockD,
             "E":seller.StockE
         }
+
+        messages = []
         if (tmp[stock] <= quantity and quantity*stockObj.price <= w3.eth.getBalance(user.address)):
             w3.personal.unlockAccount(user.address,raw_password)
             txnID = hashlib.md5(request.user.address+user_address+os.urandom(4)).hexdigest()
@@ -100,39 +93,44 @@ def buy_stock(request):
             tmp[stock].save()
             var = txnDB(txnID=txnID,status="pending",user=request.user)
             var.save()
+            messages.append("Transaction " + txnID + " was successful!")
 
         else:
-            #send error
-            pass
-        #render stuff
+            messages.append("Error in the fields!")
+
+        return render(request, {'messages': messages})
     else:
-        #reder some more stuff :3
-        pass
+        render(request, 'buy.html')
 
 @login_required(login_url='/login/')
 def sell_stock(request):
     w3 = web3.Web3(web3.HTTPProvider(node_url))
     cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
-    
+    user = UserExt.objects.get(userId = request.user)
+    tmp = {
+        "A":user.StockA,
+        "B":user.StockB,
+        "C":user.StockC,
+        "D":user.StockD,
+        "E":user.StockE
+    }
+
+    messages = []
     if request.method == "POST":
-        user = UserExt.objects.get(userId = request.user)
-        tmp = {
-            "A":user.StockA,
-            "B":user.StockB,
-            "C":user.StockC,
-            "D":user.StockD,
-            "E":user.StockE
-        }
         
         stock = request.POST.get("stock",'')
         quantity = request.POST.get("quantity",'')
         tmp[stock] += quantity
         user.save()
-        #render stuff
-    else:
-        #render some more stuff :P
+        messages.append("Stock added for listing successfully!")
+    
+    return render(request, 'sell.html', {
+        'messages': messages,
+        'stocks': temp,
+        })
 
 
+@login_required(login_url='/login/')
 def view_txns(request):
     txnList=[]  
     w3 = web3.Web3(web3.HTTPProvider(node_url))
@@ -144,6 +142,7 @@ def view_txns(request):
 
     #render stuff
 
+@login_required(login_url='/login/')
 def view_txns_user(request):
     txnList=[]  
     w3 = web3.Web3(web3.HTTPProvider(node_url))

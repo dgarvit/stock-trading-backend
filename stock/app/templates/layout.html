@@ -46,11 +46,11 @@
                 </div>
             </nav>
 
-            {% if errors %}
+            {% if messages %}
                 <header>
                     <div class="alert alert-info" role="alert">
-                        {% for error in errors %}
-                        	{{ error }}
+                        {% for message in messages %}
+                        	{{ message }}
                         {% endfor %}
                     </div>
                 </header>

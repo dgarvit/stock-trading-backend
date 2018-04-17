@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sell
+{% endblock %}
+
+{% block main %}
+    <form action="" method="post">
+        <fieldset>
+            <h5 class = "sub-header">Available for Sale:</h5>
+                <div class = "form-group">
+                    <table align = "center">
+                        <tr bgcolor="#f7f7f7">
+                            <th>Code</th>
+                            <th>Quantity</th>
+                        </tr>
+                        {% for key,value in stock.items %}
+                        <tr>
+                            <td>{{ key }}</td>
+                            <td>{{ value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                <div class="form-group">
+                    <input autocomplete="off" autofocus class="form-control" name="stock" placeholder="Stock Code (e.g BAC)" type="text"/>
+                </div>
+                <div class="form-group">
+                    <input autocomplete="off" autofocus class="form-control" name="quantity" placeholder="Quantity" type="text"/>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default" type="submit">Sell Stocks</button>
+        </fieldset>
+    </form>
+{% endblock %}
