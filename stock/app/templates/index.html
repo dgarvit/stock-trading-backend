@@ -1,1 +1,36 @@
-hello {{ user }}
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+        <fieldset>
+            <div>
+                <h5 class = "index-subheader"><br><b>Username:</b>&nbsp; {{ user }}</br><br><b>Balance:</b>&nbsp; {{ balance }}</br>
+                </h5>
+            </div>
+            <!--<div class = "form-group">
+                <table align = "center">
+                    {% if sum(quantity) != 0 %}
+                    <tr bgcolor="#f7f7f7">
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Quantity</th>
+                        <th>Current Price p/s</th>
+                        <th>Current Value</th>
+                    </tr>
+                    {% endif %}
+                    {% for i in iterable_range if quantity[i] != 0 %}
+                    <tr>
+                        <td>{{symbol[i]["stock"]}}</td>
+                        <td>{{name[i]["name"]}}</td>
+                        <td>{{quantity[i]}}</td>
+                        <td>{{usd(currentprice[i]["price"])}}</td>
+                        <td>{{usd(currentvaluation[i])}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>-->
+        </fieldset>
+{% endblock %}

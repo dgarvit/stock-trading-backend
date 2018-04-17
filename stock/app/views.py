@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from .models import UserExt, Stocks
-
+import time
 from web3.contract import ConciseContract
 
 import web3
@@ -19,7 +19,12 @@ node_url = "http://localhost:8545"
 
 @login_required(login_url='/login/')
 def index(request):
-	return render(request, 'index.html')
+	w3 = web3.Web3(web3.HTTPProvider(node_url))
+	usr = UserExt(userId=request.user)
+	balance  = w3.eth.getBalance(usr.address)
+	return render(request, 'index.html', {
+		balance: balance,
+		})
 
 def signup(request):
     if request.method == 'POST':
