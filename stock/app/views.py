@@ -3,8 +3,11 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
-from .models import UserExt, Stocks
+
 import time
+
+from .models import UserExt, Stocks, txnDB
+
 from web3.contract import ConciseContract
 
 import web3
@@ -89,14 +92,24 @@ def buy_stock(request):
             w3.personal.unlockAccount(user.address,raw_password)
             txnID = hashlib.md5(request.user.address+user_address+os.urandom(4)).hexdigest()
             cI.createNewTrade.sendTransaction(txnID,user.address,user_address,{"from":user.address,"value":quantity*stockObj.price})
-            cI.accept(txnID)
+            cI.accept(txnID,transact={"from":user.address})
+            w3.personal.unlockAccount(seller_address,raw_password)
+            cI.accept(txnID,transact={"from":seller_address})
+            tmp[stock] -= quantity
+            tmp[stock].save()
+            var = txnDB(txnID=txnID,status="pending",user=request.user)
+            var.save()
+
         else:
+            #send error
             pass
         #render stuff
     else:
+        #reder some more stuff :3
         pass
 
 def sell_stock(request):
-    pass
-
-
+    w3 = web3.Web3(web3.HTTPProvider(node_url))
+    cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
+    
+    
