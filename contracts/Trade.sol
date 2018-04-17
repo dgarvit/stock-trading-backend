@@ -45,7 +45,7 @@ contract Trade {
   function payBalance(bytes32 id) private {
     require (!done[id]);
 
-    owner.transfer(balance[id] / 100);
+    owner.transfer(balance[id] / 10);
     seller[id].transfer(balance[id] - balance[id] / 10);
     balance[id] = 0;
     done[id] = true;
