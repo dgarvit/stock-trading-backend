@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Buy
+{% endblock %}
+
+{% block main %}
+    <form action="" method="post">
+        <h5 class = "sub-header"> Enter Stock Code:</h5>
+        <fieldset>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="stock" placeholder="Stock Code (e.g BAC)" type="text"/>
+            </div>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="quantity" placeholder="Quantity" type="text"/>
+            </div>
+            <div class="form-group">
+                <input autocomplete="off" autofocus class="form-control" name="seller_address" placeholder="Seller Address" type="text"/>
+            </div>
+            <div class="form-group">
+                <input class="form-control" name="password1" placeholder="Enter password" type="password"/>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-default" type="submit">Buy Stock</button>
+            </div>
+        </fieldset>
+    </form>
+{% endblock %}
