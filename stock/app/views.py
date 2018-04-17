@@ -52,8 +52,8 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
+@login_required(login_url='/login/')
 def home(request):
-    
     user = UserExt.objects.get(userId=request.user)
     w3 = web3.Web3(web3.HTTPProvider(node_url))
     d={}
@@ -69,6 +69,7 @@ def home(request):
 
     return render(request, 'home.html', d)
 
+@login_required(login_url='/login/')
 def buy_stock(request):
     w3 = web3.Web3(web3.HTTPProvider(node_url))
     cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
@@ -108,8 +109,28 @@ def buy_stock(request):
         #reder some more stuff :3
         pass
 
+@login_required(login_url='/login/')
 def sell_stock(request):
     w3 = web3.Web3(web3.HTTPProvider(node_url))
     cI = w3.eth.contract(abi,contract_address,ContractFactoryClass=ConciseContract) 
     
-    
+    if request.method == "POST":
+        user = UserExt.objects.get(userId = request.user)
+        tmp = {
+            "A":user.StockA,
+            "B":user.StockB,
+            "C":user.StockC,
+            "D":user.StockD,
+            "E":user.StockE
+        }
+        
+        stock = request.POST.get("stock",'')
+        quantity = request.POST.get("quantity",'')
+        tmp[stock] += quantity
+        user.save()
+        #render stuff
+    else:
+        #render some more stuff :P
+
+
+
